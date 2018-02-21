@@ -1,0 +1,28 @@
+You need to add this to your application configuration:
+---------------------------------------------
+
+'modules' => [
+        'menu' => [
+            'class' => 'domain\modules\menu\Module',
+            'defaultRoute' => 'menu',
+        ],
+    ],
+
+---------------------------------------------
+
+You need to add this to your application parameters:
+
+---------------------------------------------
+
+'menuTypes' => [
+        'link',
+        'tag',
+        'content',
+        'action',
+        ],
+
+----------------------------------------------
+You need to add this to your composer.json
+
+"paulzi/yii2-nested-sets": "^1.0",
+

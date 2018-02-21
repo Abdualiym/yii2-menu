@@ -1,0 +1,42 @@
+{
+  "name": "Ziyat/yii2-cms-menu",
+  "description": "Yii2 cms menu table emulator class",
+  "keywords": [
+    "yii2",
+    "framework",
+    "advanced",
+    "language"
+  ],
+  "homepage": "http://www.infosystems.uz/",
+  "type": "project",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Ziyodilla Mirkhanov",
+      "email": "ziyat@infosystems.uz",
+      "homepage": "http://infosystems.uz"
+    }
+  ],
+  "require": {
+    "yiisoft/yii2": "~2.0",
+    "elisdn/yii2-composite-form": "^1.0",
+    "abdualiym/yii2-language-class": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "ziyat\\cms-menu\\": ""
+    }
+  },
+  "config": {
+    "process-timeout": 1800
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ]
+}
