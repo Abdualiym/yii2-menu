@@ -1,12 +1,12 @@
 <?php
 
-namespace domain\modules\menu\services;
+namespace abdualiym\menu\services;
 
 
-use domain\modules\menu\entities\Menu;
-use domain\modules\menu\entities\MenuTranslate;
-use domain\modules\menu\forms\menu\MenuForm;
-use domain\modules\menu\repositories\MenuRepository;
+use abdualiym\menu\entities\Menu;
+use abdualiym\menu\entities\MenuTranslate;
+use abdualiym\menu\forms\menu\MenuForm;
+use abdualiym\menu\repositories\MenuRepository;
 
 class MenuService
 {

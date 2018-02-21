@@ -1,6 +1,6 @@
 <?php
 
-namespace domain\modules\menu\entities;
+namespace abdualiym\menu\entities;
 
 use Yii;
 

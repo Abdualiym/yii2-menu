@@ -1,5 +1,5 @@
 <?php
-namespace domain\modules\menu\components;
+namespace abdualiym\menu\components;
 
 use codemix\localeurls\UrlManager;
 

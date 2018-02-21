@@ -1,6 +1,6 @@
 <?php
 
-namespace domain\modules\menu\widgets;
+namespace abdualiym\menu\widgets;
 
 use abdualiym\languageClass\Language;
 use domain\modules\menu\entities\Menu;
@@ -34,23 +34,6 @@ class Navigations extends Widget
         $cache = Yii::$app->cache;
 
         $dependency = new DbDependency(['sql' => 'SELECT MAX(updated_at) FROM ' . Menu::tableName()]);
-
-//        $dependency = [
-//            'dependency' => [
-//                'class' => 'yii\caching\ChainedDependency',
-//                'dependencies' => [
-//                    new DbDependency([
-//                        'sql' => 'SELECT MAX(updated_at) FROM ' . Menu::tableName()
-//                    ]),
-//                    new DbDependency([
-//                        'sql' => 'SELECT MAX(updated_at) FROM ' . Category::tableName()
-//                    ]),
-//                    new DbDependency([
-//                        'sql' => 'SELECT MAX(updated_at) FROM ' . Text::tableName()
-//                    ]),
-//                ]
-//            ],
-//        ];
         $children = $cache->getOrSet('navigation-' . Yii::$app->language, function () use ($tree) {
             $lang = Language::getLangByPrefix(Yii::$app->language);
             return $tree->getDescendants()

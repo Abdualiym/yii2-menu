@@ -1,13 +1,12 @@
 <?php
 
-namespace domain\modules\menu\controllers;
+namespace abdualiym\menu\controllers;
 
-use domain\entities\Language;
-use domain\modules\menu\forms\menu\MenuForm;
-use domain\modules\menu\services\MenuService;
+use abdualiym\menu\forms\menu\MenuForm;
+use abdualiym\menu\services\MenuService;
 use Yii;
-use domain\modules\menu\entities\Menu;
-use domain\modules\menu\entities\MenuSearch;
+use abdualiym\menu\entities\Menu;
+use abdualiym\menu\entities\MenuSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

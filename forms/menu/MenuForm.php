@@ -1,12 +1,12 @@
 <?php
 
-namespace domain\modules\menu\forms\menu;
+namespace abdualiym\menu\forms\menu;
 
 use abdualiym\languageClass\Language;
-use domain\modules\menu\entities\Menu;
+use abdualiym\menu\entities\Menu;
 use yii\helpers\ArrayHelper;
 use elisdn\compositeForm\CompositeForm;
-use domain\modules\menu\forms\menu\TranslateForm;
+use abdualiym\menu\forms\menu\TranslateForm;
 use yii\helpers\VarDumper;
 
 /**

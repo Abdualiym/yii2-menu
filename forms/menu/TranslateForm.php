@@ -1,9 +1,9 @@
 <?php
-namespace domain\modules\menu\forms\menu;
+namespace abdualiym\menu\forms\menu;
 
 use yii\base\Model;
-use domain\modules\menu\entities\Menu;
-use domain\modules\menu\entities\MenuTranslate;
+use abdualiym\menu\entities\Menu;
+use abdualiym\menu\entities\MenuTranslate;
 
 class TranslateForm extends Model
 {

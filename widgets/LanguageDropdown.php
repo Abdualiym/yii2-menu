@@ -1,6 +1,6 @@
 <?php
 
-namespace domain\modules\menu\widgets;
+namespace abdualiym\menu\widgets;
 
 use Yii;
 use yii\bootstrap\Dropdown;

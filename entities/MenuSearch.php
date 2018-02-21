@@ -1,11 +1,11 @@
 <?php
 
-namespace domain\modules\menu\entities;
+namespace abdualiym\menu\entities;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use domain\modules\menu\entities\Menu;
+use abdualiym\menu\entities\Menu;
 
 /**
  * MenuSearch represents the model behind the search form about `app\modules\Menu\entities\Menu`.

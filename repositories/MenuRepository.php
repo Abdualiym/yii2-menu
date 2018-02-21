@@ -1,10 +1,10 @@
 <?php
 
-namespace domain\modules\menu\repositories;
+namespace abdualiym\menu\repositories;
 
 
-use domain\modules\menu\entities\Menu;
-use domain\modules\menu\entities\MenuTranslate;
+use abdualiym\menu\entities\Menu;
+use abdualiym\menu\entities\MenuTranslate;
 use yii\web\NotFoundHttpException;
 
 class MenuRepository

@@ -1,9 +1,9 @@
 <?php
 
-namespace domain\modules\menu\entities;
+namespace abdualiym\menu\entities;
 
 use abdualiym\languageClass\Language;
-use domain\modules\menu\entities\queries\MenuQuery;
+use abdualiym\menu\entities\queries\MenuQuery;
 use backend\entities\User;
 use domain\modules\text\entities\Category;
 use domain\modules\text\entities\CategoryTranslation;
