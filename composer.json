@@ -20,7 +20,7 @@
   "require": {
     "yiisoft/yii2": "~2.0",
     "elisdn/yii2-composite-form": "^1.0",
-    "abdualiym/yii2-language-class": "^1.0"
+    "abdualiym/yii2-language-class": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "4.*"
