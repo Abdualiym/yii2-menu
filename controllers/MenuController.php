@@ -24,6 +24,10 @@ class MenuController extends Controller
         parent::__construct($id, $module, $config);
         $this->service = $service;
     }
+    public function getViewPath()
+    {
+        return Yii::getAlias('@vendor/abdualiym/yii2-menu/views/menu');
+    }
     /**
      * @inheritdoc
      */

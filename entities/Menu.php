@@ -2,21 +2,21 @@
 
 namespace abdualiym\menu\entities;
 
-use abdualiym\languageClass\Language;
 use abdualiym\menu\entities\queries\MenuQuery;
+use abdualiym\menu\entities\MenuTranslate;
+use abdualiym\languageClass\Language;
+use abdualiym\text\entities\Category;
+use abdualiym\text\entities\CategoryTranslation;
+use abdualiym\text\entities\Text;
+use abdualiym\text\entities\TextTranslation;
 use backend\entities\User;
-use domain\modules\text\entities\Category;
-use domain\modules\text\entities\CategoryTranslation;
-use domain\modules\text\entities\Text;
-use domain\modules\text\entities\TextTranslation;
-use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use MongoDB\BSON\Type;
 use Yii;
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use paulzi\nestedsets\NestedSetsBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\data\ArrayDataProvider;
 use yii\db\ActiveRecord;
-use domain\modules\menu\entities\MenuTranslate;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
@@ -473,11 +473,11 @@ class Menu extends ActiveRecord
     {
         $langs = Yii::$app->params['languages'];
         $actions = Yii::$app->params['actions'];
-        $path = realpath("./../../frontend/config/urlManager.php");
+        $path = realpath(Yii::getAlias('@frontend/config/urlManager.php'));
         $fp = fopen($path, "w"); // Открываем файл в режиме записи
         $mytext = "<?php
     return [
-             'class' => 'domain\modules\menu\components\MenuUrlManager',
+             'class' => 'abdualiym\menu\components\MenuUrlManager',
              'enablePrettyUrl' => true,
              'showScriptName' => false,
              'enableStrictParsing' => true,

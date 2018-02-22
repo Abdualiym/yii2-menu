@@ -2,11 +2,11 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use domain\modules\menu\entities\Menu;
+use abdualiym\menu\entities\Menu;
 use abdualiym\languageClass\Language;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use domain\modules\text\forms\TextForm;
+use abdualiym\text\forms\TextForm;
 
 
 $langList = Language::langList(Yii::$app->params['languages']);
@@ -91,7 +91,6 @@ $actionsList = $menu->actionsList();
 $categoriesListJson = Json::encode($categoriesList);
 $textsListJson = Json::encode($textsList);
 $actionsListJson = Json::encode($actionsList);
-//\yii\helpers\VarDumper::dump($textsListJson,100,true);
 $script = <<< JS
 
     function getHtml(currentType,categoriesList,textsList,actionsList){

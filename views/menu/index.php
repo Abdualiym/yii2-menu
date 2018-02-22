@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use domain\modules\menu\entities\Menu;
+use abdualiym\menu\entities\Menu;
 use abdualiym\languageClass\Language;
 
 /* @var $this yii\web\View */

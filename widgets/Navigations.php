@@ -3,11 +3,11 @@
 namespace abdualiym\menu\widgets;
 
 use abdualiym\languageClass\Language;
-use domain\modules\menu\entities\Menu;
-use domain\modules\text\entities\Category;
-use domain\modules\text\entities\CategoryTranslation;
-use domain\modules\text\entities\Text;
-use domain\modules\text\entities\TextTranslation;
+use abdualiym\menu\entities\Menu;
+use abdualiym\text\entities\Category;
+use abdualiym\text\entities\CategoryTranslation;
+use abdualiym\text\entities\Text;
+use abdualiym\text\entities\TextTranslation;
 use yii\base\Widget;
 use Yii;
 use yii\caching\DbDependency;

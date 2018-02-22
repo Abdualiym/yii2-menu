@@ -5,7 +5,7 @@
     "yii2",
     "framework",
     "advanced",
-    "language"
+    "menu"
   ],
   "homepage": "http://www.infosystems.uz/",
   "type": "project",
@@ -19,8 +19,11 @@
   ],
   "require": {
     "yiisoft/yii2": "~2.0",
+    "codemix/yii2-localeurls": "^1.5",
     "elisdn/yii2-composite-form": "^1.0",
-    "abdualiym/yii2-language-class": "*"
+    "abdualiym/yii2-language-class": "*",
+    "abdualiym/yii2-text": "*",
+    "la-haute-societe/yii2-save-relations-behavior": "^1.2",
   },
   "require-dev": {
     "phpunit/phpunit": "4.*"
