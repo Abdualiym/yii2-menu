@@ -24,16 +24,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterModel' => $searchModel,
                 'columns' => [
 //            ['class' => 'yii\grid\SerialColumn'],
-                    [
-                        'label' => 'Позиция',
-                        'value' => function (Menu $model) {
-                            return
-                                Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['move-up', 'id' => $model->id]) .
-                                Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', ['move-down', 'id' => $model->id]);
-                        },
-                        'format' => 'raw',
-                        'contentOptions' => ['style' => 'text-align: center'],
-                    ],
+//                    [
+//                        'label' => 'Позиция',
+//                        'value' => function (Menu $model) {
+//                            return
+//                                Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', ['move-up', 'id' => $model->id]) .
+//                                Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', ['move-down', 'id' => $model->id]);
+//                        },
+//                        'format' => 'raw',
+//                        'contentOptions' => ['style' => 'text-align: center'],
+//                    ],
                     [
                         'attribute' => 'title',
                         'label' => 'Заголовок',
