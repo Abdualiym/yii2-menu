@@ -100,7 +100,7 @@ class Navigations extends Widget
             return CategoryTranslation::find()->where(['parent_id' => $Ids['categories'], 'lang_id' => $Ids['lang']['id']])->asArray()->all();
 
         }, 0, $dependency);
-        $categories = $cache->getOrSet('categories-' . Yii::$app->language, function (){
+        $allCategories = $cache->getOrSet('categories-' . Yii::$app->language, function (){
             return CategoryTranslation::find()->asArray()->all();
 
         }, 0, $dependency);
