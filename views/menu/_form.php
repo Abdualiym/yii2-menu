@@ -84,6 +84,8 @@ if (!empty($menu)) {
 
 <?php
 
+
+
 $menu = new Menu();
 $actionsList = $menu->actionsList();
 $categoriesListJson = Json::encode($categoriesList);
@@ -100,13 +102,15 @@ $script = <<< JS
     var selectedAttr = '';
     for(var i=0; i < categoryKeys.length; i++)
         {
+            var name = categoriesList[categoryKeys[i]][0]['name'] !== undefined ? categoriesList[categoryKeys[i]][0]['name'] :  categoriesList[categoryKeys[i]];
             selectedAttr = selected == categoryKeys[i] ? ' selected="selected"' : '';
-            optionsCat += '<option '+selectedAttr+' value="'+categoryKeys[i]+'">'+categoriesList[categoryKeys[i]]+'</option>';
+            optionsCat += '<option '+selectedAttr+' value="'+categoryKeys[i]+'">'+name+'</option>';
         }
     for(var i=0; i < textKeys.length; i++)
         {
+            var title = textsList[textKeys[i]][0]['title'] !== undefined ? textsList[textKeys[i]][0]['title']:textsList[textKeys[i]];
             selectedAttr = selected == textKeys[i] ? ' selected="selected"' : '';
-            optionsText += '<option '+selectedAttr+' value="'+textKeys[i]+'">'+textsList[textKeys[i]]+'</option>';
+            optionsText += '<option '+selectedAttr+' value="'+textKeys[i]+'">'+title+'</option>';
         }
     for(var i=0; i < actionsKeys.length; i++)
         {
@@ -149,9 +153,9 @@ $script = <<< JS
     var type = $("#menuform-type"),
         menu_types = $(".menu_types"),
         categoriesList = $categoriesListJson,
-        textsList = $textsListJson,
-        actionsList = $actionsListJson;
-        typeHelper = '$typeHelper';
+        textsList      = $textsListJson,
+        actionsList    = $actionsListJson,
+        typeHelper     = '$typeHelper';
         
     if(typeHelper){
        render(type.val());
