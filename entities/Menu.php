@@ -389,6 +389,7 @@ class Menu extends ActiveRecord
             ->joinWith('text')
             ->where(['text_texts.category_id' => $categoryTranslation['parent_id'], 'lang_id' => $lang['id']])
             ->asArray()
+            ->orderBy(['date' => SORT_DESC])
             ->all()) {
             $data['articles'] = $articles;
             foreach ($data['articles'] as $key => $article) {
