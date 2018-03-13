@@ -197,6 +197,7 @@ class Menu extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
             ],
+
             [
                 'class' => SaveRelationsBehavior::className(),
                 'relations' => ['translate'],
