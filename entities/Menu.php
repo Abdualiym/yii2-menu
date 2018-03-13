@@ -355,7 +355,7 @@ class Menu extends ActiveRecord
                 $i++;
             }
             if ($child['type'] == 'action') {
-                $typeIds['actions'][] = $child['type_helper'];
+                $typeIds['modules'][] = $child['type_helper'];
             }
         }
         $data = [];
@@ -382,14 +382,13 @@ class Menu extends ActiveRecord
         if (isset($typeIds['links'])) {
             $data['links'] = $typeIds['links'];
         }
-        if (isset($typeIds['actions'])) {
-            $data['actions'] = $typeIds['actions'];
+        if (isset($typeIds['modules'])) {
+            $data['modules'] = $typeIds['modules'];
         }
         if ($articles = TextTranslation::find()
             ->joinWith('text')
             ->where(['text_texts.category_id' => $categoryTranslation['parent_id'], 'lang_id' => $lang['id']])
             ->asArray()
-            ->orderBy(['date' => SORT_DESC])
             ->all()) {
             $data['articles'] = $articles;
             foreach ($data['articles'] as $key => $article) {
@@ -450,21 +449,21 @@ class Menu extends ActiveRecord
     }
 
 
-    public function transactions()
+    public function transmodules()
     {
         return [
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 
-    public function actionsList()
+    public function modulesList()
     {
-        return ArrayHelper::map(Yii::$app->params['actions'], 'slug', 'name');
+        return ArrayHelper::map(Yii::$app->params['modules'], 'slug', 'name');
     }
 
     public static function isAction($slug)
     {
-        foreach (Yii::$app->params['actions'] as $action) {
+        foreach (Yii::$app->params['modules'] as $action) {
             if ($action['slug'] == $slug) {
                 return true;
             }
@@ -474,7 +473,7 @@ class Menu extends ActiveRecord
     public function beforeSave($insert)
     {
         $langs = Yii::$app->params['languages'];
-        $actions = Yii::$app->params['actions'];
+        $modules = Yii::$app->params['modules'];
         $path = realpath(Yii::getAlias('@frontend/config/urlManager.php'));
         $fp = fopen($path, "w"); // Открываем файл в режиме записи
         $mytext = "<?php
@@ -491,13 +490,13 @@ class Menu extends ActiveRecord
 
 
         $mytext .= "
-             'rules' => [\n'' => 'site/index',\n'captcha'=>'/site/captcha',\n'rss'=>'/rss/index',\n";
+             'rules' => [\n'' => 'site/index',\n'captcha'=>'/site/captcha',\n";
         $menu = self::find()->where(['type' => 'action'])->asArray()->all();
         if (count($menu) > 0) {
-            foreach ($actions as $action) {
+            foreach ($modules as $action) {
                 foreach ($menu as $m) {
                     if ($m['type_helper'] == $action['slug']) {
-                        $mytext .= "'" . $action['slug'] . "' => '" . $action['action'] . "',\n";
+                        $mytext .= "'" . $action['slug'] . "/<_c:[\w\-]+>/<_a:[\w-]+>' => '" . $action['action'] . "/<_c>/<_a>',\n";
                     }
                 }
 
