@@ -87,7 +87,7 @@ if (!empty($menu)) {
 
 
 $menu = new Menu();
-$actionsList = $menu->actionsList();
+$actionsList = $menu->modulesList();
 $categoriesListJson = Json::encode($categoriesList);
 $textsListJson = Json::encode($textsList);
 $actionsListJson = Json::encode($actionsList);
