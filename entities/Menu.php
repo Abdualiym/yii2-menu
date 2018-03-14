@@ -504,6 +504,7 @@ class Menu extends ActiveRecord
             }
         }
         $mytext .= "
+            'vote/<_c:[\w\-]+>/<_a:[\w-]+>' => 'vote/<_c>/<_a>',\n
             '<lang:(uz|ru)>/<slug:[\w_\/-]+>' => 'site/change',\n
             '<slug:[^(uz|ru)]+>' => 'site/slug-render',\n
             '<slug:[\w_\/-]+>' => 'site/slug-render',\n
