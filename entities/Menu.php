@@ -92,7 +92,8 @@ class Menu extends ActiveRecord
 
     public static function thereAreParents(int $id)
     {
-        return (self::find()->where(['type_helper' => $id])->one())->getParent()->andWhere(['>', 'depth', 0])->all();
+        $result = self::find()->where(['type_helper' => $id])->one();
+        return $result ? $result->getParent()->andWhere(['>', 'depth', 0])->all() : null;
     }
 
     public static function isCorrectSlug(array $array, string $slug, array $lang, string $type)
