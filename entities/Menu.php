@@ -243,9 +243,10 @@ class Menu extends ActiveRecord
                 $slug = self::buildSlug($menu, $lang, $currentSlug,true);
             } else {
                 $slug = self::buildSlug($menu, $lang, $currentSlug);
-                if($slug == '/'){
-                    $slug .= $currentSlug;
-                }
+
+                $slug .= $slug != '/' ? '/' : '';
+
+                $slug .= $currentSlug;
             }
         }
         return $slug;
@@ -286,8 +287,12 @@ class Menu extends ActiveRecord
                 $slug .= $item['slug'] . '/';
             }
 
+            if (!$is_article) {
+                $slug = '/' . substr($slug, 1, -1);
 
+            } else {
                 $slug .= $currentSlug;
+            }
 
         }
         return $slug;
