@@ -6,7 +6,7 @@ use abdualiym\menu\entities\Menu;
 use abdualiym\languageClass\Language;
 
 /* @var $this yii\web\View */
-/* @var $searchModel domain\modules\menu\entities\MenuSearch */
+/* @var $searchModel abdualiym\menu\entities\MenuSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Список меню';
@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="menu-index">
     <p>
-        <?= Html::a('Создать меню', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать меню', ['create'], ['class' => 'btn btn-flat btn-success']) ?>
     </p>
     <div class="box box-default">
         <div class="box-header with-border">Заголовки по всем языкам</div>
@@ -38,13 +38,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'title',
                         'label' => 'Заголовок',
                         'content' => function ($model) {
-                            foreach ($model->translate as $translation){
-                                if($translation['lang_id'] == (Language::getLangByPrefix('ru'))['id']){
-                                    $translate = $translation;
+                            foreach ($model->translations as $tr){
+
+                                if($tr['lang_id'] == (Language::getLangByPrefix('ru'))['id']){
+                                    $translation = $tr;
                                 }
                             }
                             $indent = ($model->depth >= 1 ? str_repeat('— ', $model->depth) . ' ' : '');
-                            return $indent . Html::a(Html::encode($translate->title), ['view', 'id' => $model->id]);
+                            return $indent . Html::a(Html::encode($translation->title), ['view', 'id' => $model->id]);
                         },
                         'format' => 'raw',
                     ],
@@ -53,15 +54,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'parent',
                         'label' => 'Родительское меню',
                         'content' => function ($model) {
-                            $parent = $model->getParent()->with('translate')->one();
+                            $parent = $model->getParent()->with('translations')->one();
 
                             if ($parent) {
-                                foreach ($parent->translate as $translation){
+                                foreach ($parent->translations as $translation){
                                     if($translation->lang_id == (Language::getLangByPrefix('ru'))['id']){
-                                        $translate = $translation;
+                                        $translations = $translation;
                                     }
                                 }
-                                $parent = Html::a(Html::encode($translate->title), ['view', 'id' => $parent->id]);
+                                $parent = Html::a(Html::encode($translations->title), ['view', 'id' => $parent->id]);
                             } else {
                                 $parent = 'Основное';
                             }

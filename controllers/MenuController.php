@@ -7,6 +7,7 @@ use abdualiym\menu\services\MenuService;
 use Yii;
 use abdualiym\menu\entities\Menu;
 use abdualiym\menu\entities\MenuSearch;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -165,7 +166,7 @@ class MenuController extends Controller
      */
     protected function findModel($id)
     {
-        if (($menu = Menu::find()->with('translate')->where(['id' => $id])->one()) !== null) {
+        if (($menu = Menu::find()->with('translations')->where(['id' => $id])->one()) !== null) {
             return $menu;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

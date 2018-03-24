@@ -4,14 +4,14 @@ namespace abdualiym\menu\repositories;
 
 
 use abdualiym\menu\entities\Menu;
-use abdualiym\menu\entities\MenuTranslate;
+use abdualiym\menu\entities\MenuTranslation;
 use yii\web\NotFoundHttpException;
 
 class MenuRepository
 {
     public function get($id)
     {
-        if (!$menu = Menu::find()->where(['id' => $id])->with('translate')->one()) {
+        if (!$menu = Menu::find()->where(['id' => $id])->with('translations')->one()) {
 
             if (!$roots = Menu::find()->roots()->all()) {
                 return $roots;
@@ -19,14 +19,6 @@ class MenuRepository
             throw new NotFoundHttpException('Menu is not found.');
         }
         return $menu;
-    }
-
-    public function getTranslate($menu_id)
-    {
-        if (!$translate = MenuTranslate::find()->where(['menu_id' => $menu_id])->all()) {
-            throw new NotFoundHttpException('Translate is not found.');
-        }
-        return $translate;
     }
 
     public function save(Menu $menu)
@@ -38,7 +30,7 @@ class MenuRepository
 
     public function existsByMainMenu($id)
     {
-        return MenuTranslate::find()->andWhere(['menu_id' => $id])->exists();
+        return MenuTranslation::find()->andWhere(['menu_id' => $id])->exists();
     }
 
 
@@ -46,7 +38,7 @@ class MenuRepository
     {
         $menu->tree = 0;
         $menu->lft = 0;
-        $menu->rgt = 0;
+        $menu->rgt = 1;
         $menu->save();
         if (!$menu->delete()) {
             throw new \RuntimeException('Removing error.');

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model domain\modules\menu\entities\Menu */
+/* @var $model abdualiym\menu\entities\Menu */
 
 $this->title = 'Создать меню';
 $this->params['breadcrumbs'][] = ['label' => 'Меню', 'url' => ['index']];

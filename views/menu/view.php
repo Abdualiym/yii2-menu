@@ -7,7 +7,7 @@ use abdualiym\menu\entities\Menu;
 use abdualiym\text\entities\CategoryTranslation;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\Menu\entities\Menu */
+/* @var $model abdualiym\menu\entities\Menu */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Menus', 'url' => ['index']];
@@ -15,9 +15,9 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="menu-view">
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
+        <?= Html::a('Редактировать', ['update', 'id' => $model->id], ['class' => 'btn btn-flat btn-primary']) ?>
+        <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-flat btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
                 'method' => 'post',
@@ -40,15 +40,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'parent',
                 'label' => 'Родительское меню',
                 'value' => function ($model) {
-                    $parent = $model->getParent()->with('translate')->one();
+                    $parent = $model->getParent()->with('translations')->one();
 
                     if ($parent) {
-                        foreach ($parent->translate as $translation){
+                        foreach ($parent->translations as $translation){
                             if($translation->lang_id == (Language::getLangByPrefix('ru'))['id']){
-                                $translate = $translation;
+                                $translations = $translation;
                             }
                         }
-                        $parent = Html::a(Html::encode($translate->title), ['view', 'id' => $parent->id]);
+                        $parent = Html::a(Html::encode($translations->title), ['view', 'id' => $parent->id]);
                     } else {
                         $parent = 'Основное';
                     }

@@ -4,93 +4,94 @@ namespace abdualiym\menu\services;
 
 
 use abdualiym\menu\entities\Menu;
-use abdualiym\menu\entities\MenuTranslate;
+use abdualiym\menu\entities\MenuTranslation;
 use abdualiym\menu\forms\menu\MenuForm;
 use abdualiym\menu\repositories\MenuRepository;
+use yii\helpers\VarDumper;
 
 class MenuService
 {
-    private $menuRepo;
+    private $repository;
     private $translate;
 
-    public function __construct(MenuRepository $menuRepo)
+    public function __construct(MenuRepository $repository)
     {
-        $this->menuRepo = $menuRepo;
+        $this->repository = $repository;
     }
 
     public function create(MenuForm $form)
     {
-        $parent = !empty($form->parentId) ? $this->menuRepo->get($form->parentId) : '';
+        $parent = !empty($form->parentId) ? $this->repository->get($form->parentId) : '';
 
         $menu = Menu::create(
             $form->status,
             $form->type,
             $form->type_helper
         );
-
-
+        foreach ($form->translations as $translation) {
+            $menu->setTranslation($translation->title,$translation->lang_id);
+        }
 
         if (!empty($parent)) {
             $menu->appendTo($parent);
         } else {
             $menu->makeRoot();
         }
-
-        $menu->translate = Menu::translateAssigment($form);
-        $this->menuRepo->save($menu);
+        $this->repository->save($menu);
         return $menu;
     }
 
     public function edit($id, MenuForm $form)
     {
-
-        $menu = $this->menuRepo->get($id);
+        $menu = $this->repository->get($id);
         $menu->edit(
             $form->status,
             $form->type,
             $form->type_helper
         );
 
+        foreach ($form->translations as $translation) {
+            $menu->setTranslation($translation->title,$translation->lang_id);
+        }
 
         if (empty($form->parentId)) {
             $menu->makeRoot();
         } else {
             if (((!empty($menu->parent->id)) !== $form->parentId)) {
-                if (($parent = $this->menuRepo->get($form->parentId)) && $parent->id !== $id) {
+                if (($parent = $this->repository->get($form->parentId)) && $parent->id !== $id) {
                     $menu->appendTo($parent);
                 }
             }
         }
-        $menu->translate = Menu::translateAssigment($form);
-        $this->menuRepo->save($menu);
+        $this->repository->save($menu);
 
     }
 
     public function remove($id)
     {
-        $menu = $this->menuRepo->get($id);
+        $menu = $this->repository->get($id);
         $this->assertIsNotRoot($menu);
-        $this->menuRepo->remove($menu);
+        $this->repository->remove($menu);
     }
 
     public function moveUp($id)
     {
-        $menu = $this->menuRepo->get($id);
+        $menu = $this->repository->get($id);
         $this->checkIsRoot($menu);
         if ($prev = $menu->prev) {
             $menu->insertBefore($prev);
         }
-        $this->menuRepo->save($menu);
+        $this->repository->save($menu);
     }
 
     public function moveDown($id)
     {
-        $menu = $this->menuRepo->get($id);
+        $menu = $this->repository->get($id);
         $this->checkIsRoot($menu);
         if ($next = $menu->next) {
             $menu->insertAfter($next);
         }
-        $this->menuRepo->save($menu);
+        $this->repository->save($menu);
     }
 
     private function checkIsRoot(Menu $menu){

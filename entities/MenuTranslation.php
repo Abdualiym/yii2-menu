@@ -14,16 +14,35 @@ use Yii;
  *
  * @property Menu $menu
  */
-class MenuTranslate extends \yii\db\ActiveRecord
+class MenuTranslation extends \yii\db\ActiveRecord
 {
 
     public static function create($title, $lang_id): self
     {
-        $translate = new static();
-        $translate->title = $title;
-        $translate->lang_id = $lang_id;
-        return $translate;
+        $translation = new static();
+        $translation->title = $title;
+        $translation->lang_id = $lang_id;
+        return $translation;
     }
+
+    public function edit($title, $lang_id)
+    {
+        $this->title = $title;
+        $this->lang_id = $lang_id;
+    }
+
+    public function isForLanguage($id): bool
+    {
+        return $this->lang_id == $id;
+    }
+
+    public static function blank($lang_id): self
+    {
+        $translation = new static();
+        $translation->lang_id = $lang_id;
+        return $translation;
+    }
+
 
     /**
      * @inheritdoc
@@ -31,12 +50,6 @@ class MenuTranslate extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'menu_menu_translate';
-    }
-
-    public function edit($title, $lang_id)
-    {
-        $this->title = $title;
-        $this->lang_id = $lang_id;
     }
 
     /**

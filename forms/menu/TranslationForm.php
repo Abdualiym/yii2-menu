@@ -3,20 +3,20 @@ namespace abdualiym\menu\forms\menu;
 
 use yii\base\Model;
 use abdualiym\menu\entities\Menu;
-use abdualiym\menu\entities\MenuTranslate;
+use abdualiym\menu\entities\MenuTranslation;
 
-class TranslateForm extends Model
+class TranslationForm extends Model
 {
     public $title;
     public $lang_id;
     public $menu_id;
 
-    public function __construct(MenuTranslate $translate = null, $config = [])
+    public function __construct(MenuTranslation $translation = null, $config = [])
     {
-        if ($translate) {
-            $this->title = $translate->title;
-            $this->lang_id = $translate->lang_id;
-            $this->menu_id = $translate->menu_id;
+        if ($translation) {
+            $this->title = $translation->title;
+            $this->lang_id = $translation->lang_id;
+            $this->menu_id = $translation->menu_id;
         }
         parent::__construct($config);
     }
@@ -28,8 +28,8 @@ class TranslateForm extends Model
     {
         return [
             [['title', 'lang_id'],'required', 'message'=> 'Необходимо заполнить Заголовок'],
-            ['lang_id', 'each', 'rule' => ['integer']],
-            ['title', 'each', 'rule' => ['string','max' => 255]],
+            [['lang_id'],'integer'],
+            [['title'], 'string','max' => 255],
             [['menu_id'], 'integer'],
             [['menu_id'], 'exist', 'skipOnError' => true, 'targetClass' => Menu::className(), 'targetAttribute' => ['menu_id' => 'id']],
         ];

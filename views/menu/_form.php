@@ -1,4 +1,8 @@
 <?php
+/* @var $this yii\web\View */
+/* @var $model abdualiym\menu\forms\menu\MenuForm */
+/* @var $menu abdualiym\menu\entities\Menu */
+/* @var $form yii\widgets\ActiveForm */
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -8,24 +12,33 @@ use yii\helpers\Json;
 use abdualiym\text\forms\TextForm;
 
 
-$langList = Language::langList(Yii::$app->params['languages']);
+$langList = Language::langList(Yii::$app->params['languages'],true);
+
+
+foreach ($model->translations as $i => $translate) {
+    if (!$translate->lang_id) {
+        $q = 0;
+        foreach ($langList as $k => $l) {
+            if ($i == $q) {
+                $translate->lang_id = $k;
+            }
+            $q++;
+        }
+    }
+}
+
+
 $menuTypes = Menu::getMenuTypes();
 $textForm = new TextForm();
 $categoriesList = $textForm->categoriesList();
 $textsList = $textForm->textsList();
+
 if (!empty($menu)) {
-    $translate = $menu->translate;
     $typeHelper = $menu->type_helper;
 }else{
-    $translate = '';
     $typeHelper = '';
 }
 
-
-/* @var $this yii\web\View */
-/* @var $model abdualiym\menu\forms\menu\MenuForm */
-/* @var $menu abdualiym\menu\entities\Menu */
-/* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="menu-form">
@@ -51,30 +64,33 @@ if (!empty($menu)) {
             <?= $form->errorSummary($model) ?>
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <?php for ($i = 0; $i < count($langList); $i++): ?>
+                <?php foreach ($model->translations as $i => $translation): ?>
+
                     <li role="presentation" <?= $i == 0 ? 'class="active"' : '' ?>>
-                        <a href="#<?= $langList[$i]['prefix'] ?>" aria-controls="<?= $langList[$i]['prefix'] ?>" role="tab" data-toggle="tab">
-                            <?= '(' . $langList[$i]['prefix'] . ') ' . $langList[$i]['title'] ?>
+                        <a href="#<?= $langList[$translation->lang_id]['prefix'] ?>" aria-controls="<?= $langList[$translation->lang_id]['prefix'] ?>" role="tab" data-toggle="tab">
+                            <?= '(' . $langList[$translation->lang_id]['prefix'] . ') ' . $langList[$translation->lang_id]['title'] ?>
                         </a>
                     </li>
-                <?php endfor ?>
+                <?php endforeach ?>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
                 <br>
-                <?php for ($i = 0; $i < count($langList); $i++): ?>
-                    <div role="tabpanel" class="tab-pane <?= $i == 0 ? 'active' : '' ?>" id="<?= $langList[$i]['prefix'] ?>">
-                        <?= $form->field($model->translate, 'title['.$i.']')->textInput(['maxlength' => true, 'value' => ($translate != '') ? $translate[$i]['title'] : $translate])->label("Заголовок на (".$langList[$i]['title'].")") ?>
-                        <?= $form->field($model->translate, 'lang_id['.$i.']')->hiddenInput(['value' => $langList[$i]['id']])->label(false) ?>
+                <?php foreach ($model->translations as $i => $translation): ?>
+                    <div role="tabpanel" class="tab-pane <?= $i == 0 ? 'active' : '' ?>" id="<?= $langList[$translation->lang_id]['prefix'] ?>">
+                        <?= $form->field($translation, '['. $i .']title')->textInput(['maxlength' => true, 'value' => $translation->title ?: '' ])->label("Заголовок на (".$langList[$translation->lang_id]['title'].")") ?>
+                        <?= $form->field($translation, '['. $i .']lang_id')->hiddenInput(['value' => $langList[$translation->lang_id]['id']])->label(false) ?>
                     </div>
-                <?php endfor ?>
+                <?php endforeach; ?>
+
+
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <?= Html::submitButton("Создать", ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton("Создать", ['class' => 'btn btn-flat btn-success']) ?>
     </div>
 
 

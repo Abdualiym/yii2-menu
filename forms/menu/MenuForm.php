@@ -2,14 +2,15 @@
 
 namespace abdualiym\menu\forms\menu;
 
-use abdualiym\menu\forms\menu\TranslateForm;
+use abdualiym\menu\forms\menu\TranslationForm;
 use abdualiym\languageClass\Language;
 use abdualiym\menu\entities\Menu;
 use elisdn\compositeForm\CompositeForm;
 use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
 
 /**
- * @property TranslateForm $translate;
+ * @property TranslationForm[] $translations;
  */
 
 class MenuForm extends CompositeForm
@@ -26,11 +27,16 @@ class MenuForm extends CompositeForm
         if ($menu) {
             $this->type = $menu->type;
             $this->type_helper = $menu->type_helper;
-            $this->translate =  new TranslateForm();
             $this->parentId = ($a=$menu->getParent()->one()) ? $a->id : null;
+
+            $this->translations = array_map(function (array $language) use ($menu) {
+                return new TranslationForm($menu->getTranslation($language['id']));
+            }, Language::langList(\Yii::$app->params['languages']));
             $this->_menu = $menu;
-        }else{
-            $this->translate = new TranslateForm();
+        } else {
+            $this->translations = array_map(function () {
+                return new TranslationForm();
+            }, Language::langList(\Yii::$app->params['languages']));
         }
         parent::__construct($config);
     }
@@ -49,15 +55,15 @@ class MenuForm extends CompositeForm
 
     public function parentMenuList()
     {
-        $menu = Menu::find()->with('translate')->orderBy('tree')->asArray()->all();
+        $menu = Menu::find()->with('translations')->orderBy('tree')->asArray()->all();
         $i = 0;
         foreach ($menu as $item) {
-            foreach ($item['translate'] as $translate) {
+            foreach ($item['translations'] as $translate) {
                 if ($translate['menu_id'] == $item['id']) {
-                    $menu[$i]['title'] = $item['translate'][0]['title'];
+                    $menu[$i]['title'] = $item['translations'][0]['title'];
                 }
             }
-            unset($menu[$i]['translate']);
+            unset($menu[$i]['translations']);
             $i++;
         }
         $makeTree = [
@@ -77,6 +83,6 @@ class MenuForm extends CompositeForm
 
     public function internalForms()
     {
-        return ['translate'];
+        return ['translations'];
     }
 }
