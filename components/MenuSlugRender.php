@@ -3,6 +3,8 @@
 namespace abdualiym\menu\components;
 
 use abdualiym\menu\entities\Menu;
+use abdualiym\text\entities\Category;
+use abdualiym\text\entities\Text;
 use abdualiym\text\entities\TextTranslation;
 use abdualiym\menu\components\MenuSlugHelper;
 use abdualiym\text\entities\CategoryTranslation;
@@ -125,8 +127,12 @@ class MenuSlugRender extends Menu
         $data = [];
         if (isset($typeIds['categories'])) {
             $data['categories'] = CategoryTranslation::find()
-                ->with('category')
-                ->where(['lang_id' => $lang['id'], 'parent_id' => $typeIds['categories']])
+                ->joinWith('category')
+                ->where([
+                    'lang_id' => $lang['id'],
+                    'parent_id' => $typeIds['categories'],
+                    'text_categories.status'=>Category::STATUS_ACTIVE
+                ])
                 ->asArray()
                 ->all();
             foreach ($data['categories'] as $key => $category) {
@@ -135,8 +141,12 @@ class MenuSlugRender extends Menu
         }
         if (isset($typeIds['pages'])) {
             $data['pages'] = TextTranslation::find()
-                ->with('text')
-                ->where(['lang_id' => $lang['id'], 'parent_id' => $typeIds['pages']])
+                ->joinWith('text')
+                ->where([
+                    'lang_id' => $lang['id'],
+                    'parent_id' => $typeIds['pages'],
+                    'text_texts.status'=>Text::STATUS_ACTIVE
+                ])
                 ->asArray()
                 ->all();
             foreach ($data['pages'] as $key => $page) {
@@ -152,7 +162,11 @@ class MenuSlugRender extends Menu
 
         if ($articles = TextTranslation::find()
             ->joinWith('text')
-            ->where(['text_texts.category_id' => $categoryTranslation['parent_id'], 'lang_id' => $lang['id']])
+            ->where([
+                'text_texts.category_id' => $categoryTranslation['parent_id'],
+                'lang_id' => $lang['id'],
+                'text_texts.status' => Text::STATUS_ACTIVE
+            ])
             ->andWhere(['>=', 'text_texts.date', (self::getFilterDate($date))['start']])
             ->andWhere(['<', 'text_texts.date', (self::getFilterDate($date))['end']])
             ->asArray()
