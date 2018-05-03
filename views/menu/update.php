@@ -3,7 +3,8 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model domain\modules\menu\entities\Menu */
+/* @var $model abdualiym\menu\entities\Menu */
+/* @var $menu abdualiym\menu\entities\Menu */
 
 $this->title = 'Update Menu: ' . $menu->translations[0]['title'];
 $this->params['breadcrumbs'][] = ['label' => 'Menus', 'url' => ['index']];

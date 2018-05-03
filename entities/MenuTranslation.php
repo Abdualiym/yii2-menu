@@ -49,7 +49,7 @@ class MenuTranslation extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'menu_menu_translate';
+        return '{{%menu_menu_translate}}';
     }
 
     /**

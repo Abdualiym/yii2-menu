@@ -2,6 +2,7 @@
 
 namespace abdualiym\menu\entities;
 
+use abdualiym\menu\components\SlugRender;
 use abdualiym\menu\entities\queries\MenuQuery;
 use abdualiym\menu\entities\MenuTranslation;
 use abdualiym\languageClass\Language;
@@ -14,6 +15,7 @@ use Yii;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use paulzi\nestedsets\NestedSetsBehavior;
 use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 use yii\data\ArrayDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -47,6 +49,7 @@ class Menu extends ActiveRecord
     const VISIBLE = 1;
     const HIDDEN = 0;
 
+
     public static function create($status, $type, $type_helper): self
     {
         $menu = new static();
@@ -61,6 +64,35 @@ class Menu extends ActiveRecord
         $this->status = $status;
         $this->type = $type;
         $this->type_helper = $type_helper;
+    }
+
+    // Status
+
+    public function activate()
+    {
+        if ($this->isActive()) {
+            throw new \DomainException('Text is already active.');
+        }
+        $this->status = self::VISIBLE;
+    }
+
+    public function draft()
+    {
+        if ($this->isDraft()) {
+            throw new \DomainException('Text is already draft.');
+        }
+        $this->status = self::HIDDEN;
+    }
+
+
+    public function isActive(): bool
+    {
+        return $this->status == self::VISIBLE;
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->status == self::HIDDEN;
     }
 
 
@@ -131,13 +163,13 @@ class Menu extends ActiveRecord
                 'link' => 'link',
                 'category' => 'category',
                 'content' => 'content',
-                'action' => 'action'
+                'action' => 'module'
             ],
             'ru' => [
                 'link' => 'Ссылка',
                 'category' => 'Категория',
                 'content' => 'Контент',
-                'action' => 'Метод в контроллере (Экшн)'
+                'action' => 'Модуль'
             ],
         ];
         if ($lang) {
@@ -164,30 +196,21 @@ class Menu extends ActiveRecord
     public function behaviors()
     {
         return [
+            BlameableBehavior::class,
+            TimestampBehavior::class,
+
             [
                 'class' => NestedSetsBehavior::class,
                 'treeAttribute' => 'tree',
             ],
             [
-                'class' => BlameableBehavior::class,
-                'createdByAttribute' => 'created_by',
-                'updatedByAttribute' => 'updated_by',
-            ],
-            'timestamp' => [
-                'class' => 'yii\behaviors\TimestampBehavior',
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-                ],
-            ],
-            [
-                'class' => SaveRelationsBehavior::className(),
+                'class' => SaveRelationsBehavior::class,
                 'relations' => ['translations'],
             ],
-
-
         ];
     }
+
+
 
     public function transactions()
     {
@@ -196,58 +219,10 @@ class Menu extends ActiveRecord
         ];
     }
 
-    public function actionsList()
+    public function actionsList($params)
     {
-        return ArrayHelper::map(Yii::$app->params['actions'], 'slug', 'name');
+        return ArrayHelper::map($params, 'slug', 'name');
     }
-
-
-
-//    public function beforeSave($insert)
-//    {
-//        $langs = Yii::$app->params['languages'];
-//        $actions = Yii::$app->params['actions'];
-//        $path = realpath(Yii::getAlias('@frontend/config/urlManager.php'));
-//        $fp = fopen($path, "w"); // Открываем файл в режиме записи
-//        $mytext = "<?php
-//    return [
-//             'class' => 'abdualiym\menu\components\MenuUrlManager',
-//             'enablePrettyUrl' => true,
-//             'showScriptName' => false,
-//             'enableStrictParsing' => true,
-//             'languages' => [ ";
-//        foreach ($langs as $lang) {
-//            $mytext .= "'" . $lang . "', ";
-//        }
-//        $mytext .= "],\n\r";
-//
-//
-//        $mytext .= "
-//             'rules' => [\n'' => 'site/index',\n'captcha'=>'/site/captcha',\n'rss'=>'/rss/index',\n";
-//        $menu = self::find()->where(['type' => 'action'])->asArray()->all();
-//        if (count($menu) > 0) {
-//            foreach ($actions as $action) {
-//                foreach ($menu as $m) {
-//                    if ($m['type_helper'] == $action['slug']) {
-//                        $mytext .= "'" . $action['slug'] . "' => '" . $action['action'] . "',\n";
-//                    }
-//                }
-//
-//            }
-//        }
-//        $mytext .= "
-//            'vote/<_c:[\w\-]+>/<_a:[\w-]+>' => 'vote/<_c>/<_a>',\n
-//            '<lang:(uz|ru)>/<slug:[\w_\/-]+>' => 'site/change',\n
-//            '<slug:[^(uz|ru)]+>' => 'site/slug-render',\n
-//            '<slug:[\w_\/-]+>' => 'site/slug-render',\n
-//            ]];";
-//        $test = fwrite($fp, $mytext); // Запись в файл
-//        if ($test) echo 'Данные в файл успешно занесены.';
-//        else echo 'Ошибка при записи в файл.';
-//        fclose($fp); //Закрытие файла
-//
-//        return parent::beforeSave($insert); // TODO: Change the autogenerated stub
-//    }
 
     public static function find()
     {

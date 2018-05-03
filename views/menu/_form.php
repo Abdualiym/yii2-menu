@@ -2,6 +2,7 @@
 /* @var $this yii\web\View */
 /* @var $model abdualiym\menu\forms\menu\MenuForm */
 /* @var $menu abdualiym\menu\entities\Menu */
+
 /* @var $form yii\widgets\ActiveForm */
 
 use yii\helpers\Html;
@@ -12,7 +13,7 @@ use yii\helpers\Json;
 use abdualiym\text\forms\TextForm;
 
 
-$langList = Language::langList(Yii::$app->params['languages'],true);
+$langList = Language::langList(Yii::$app->params['languages'], true);
 
 
 foreach ($model->translations as $i => $translate) {
@@ -35,76 +36,77 @@ $textsList = $textForm->textsList();
 
 if (!empty($menu)) {
     $typeHelper = $menu->type_helper;
-}else{
+} else {
     $typeHelper = '';
 }
 
 ?>
 
-<div class="menu-form">
+<div class="row">
     <?php $form = activeform::begin(); ?>
-    <div class="box box-default">
-        <div class="box-header with-border">Главная</div>
-        <div class="box-body">
-            <?= $form->field($model, 'status')->label('Статус')->dropDownList([Menu::VISIBLE => "Активный", Menu::HIDDEN => "Не активный"]) ?>
-            <?= $form->field($model, 'type')->label('Тип меню')->dropDownList($menuTypes) ?>
-            <div class="menu_types" style="display: none;"></div>
-            <?= $form->field($model, 'parentId')
-                ->label("Родительское меню")
-                ->dropDownList(
-                    $model->parentMenuList()
-                );
-            ?>
-        </div>
-    </div>
+    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 
-    <div class="box box-default">
-        <div class="box-header with-border">Заголовки по всем языкам</div>
-        <div class="box-body">
-            <?= $form->errorSummary($model) ?>
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" role="tablist">
-                <?php foreach ($model->translations as $i => $translation): ?>
+        <div class="box box-default">
+            <div class="box-header with-border">Главная</div>
+            <div class="box-body">
+                <?= $form->field($model, 'status')->label(false)->hiddenInput(['value' => Menu::HIDDEN]) ?>
+                <?= $form->field($model, 'type')->label('Тип меню')->dropDownList($menuTypes) ?>
+                <div class="menu_types" style="display: none;"></div>
+                <?= $form->field($model, 'parentId')
+                    ->label("Родительское меню")
+                    ->dropDownList(
+                        $model->parentMenuList()
+                    );
+                ?>
+            </div>
+            <div class="box-header with-border">Заголовки по всем языкам</div>
+            <div class="box-body">
 
-                    <li role="presentation" <?= $i == 0 ? 'class="active"' : '' ?>>
-                        <a href="#<?= $langList[$translation->lang_id]['prefix'] ?>" aria-controls="<?= $langList[$translation->lang_id]['prefix'] ?>" role="tab" data-toggle="tab">
-                            <?= '(' . $langList[$translation->lang_id]['prefix'] . ') ' . $langList[$translation->lang_id]['title'] ?>
-                        </a>
-                    </li>
-                <?php endforeach ?>
-            </ul>
+                <?= $form->errorSummary($model); ?>
 
-            <!-- Tab panes -->
-            <div class="tab-content">
-                <br>
-                <?php foreach ($model->translations as $i => $translation): ?>
-                    <div role="tabpanel" class="tab-pane <?= $i == 0 ? 'active' : '' ?>" id="<?= $langList[$translation->lang_id]['prefix'] ?>">
-                        <?= $form->field($translation, '['. $i .']title')->textInput(['maxlength' => true, 'value' => $translation->title ?: '' ])->label("Заголовок на (".$langList[$translation->lang_id]['title'].")") ?>
-                        <?= $form->field($translation, '['. $i .']lang_id')->hiddenInput(['value' => $langList[$translation->lang_id]['id']])->label(false) ?>
-                    </div>
-                <?php endforeach; ?>
 
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <?php foreach ($model->translations as $i => $translation): ?>
+
+                        <li role="presentation" <?= $i == 0 ? 'class="active"' : '' ?>>
+                            <a href="#<?= $langList[$translation->lang_id]['prefix'] ?>"
+                               aria-controls="<?= $langList[$translation->lang_id]['prefix'] ?>" role="tab"
+                               data-toggle="tab">
+                                <?= '(' . $langList[$translation->lang_id]['prefix'] . ') ' . $langList[$translation->lang_id]['title'] ?>
+                            </a>
+                        </li>
+                    <?php endforeach ?>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <br>
+                    <?php foreach ($model->translations as $i => $translation): ?>
+                        <div role="tabpanel" class="tab-pane <?= $i == 0 ? 'active' : '' ?>"
+                             id="<?= $langList[$translation->lang_id]['prefix'] ?>">
+                            <?= $form->field($translation, '[' . $i . ']title')->textInput(['maxlength' => true, 'value' => $translation->title ?: ''])->label("Заголовок на (" . $langList[$translation->lang_id]['title'] . ")") ?>
+                            <?= $form->field($translation, '[' . $i . ']lang_id')->hiddenInput(['value' => $langList[$translation->lang_id]['id']])->label(false) ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <div class="box-footer">
+                    <?= Html::submitButton("Создать", ['class' => 'btn btn-flat btn-success btn-block']) ?>
+
+                </div>
 
             </div>
         </div>
+        <?php ActiveForm::end(); ?>
     </div>
-
-    <div class="form-group">
-        <?= Html::submitButton("Создать", ['class' => 'btn btn-flat btn-success']) ?>
-    </div>
-
-
-    <?php ActiveForm::end(); ?>
-
 </div>
 
 <?php
 
 
-
 $menu = new Menu();
 
-$actionsList = $menu->actionsList();
+$actionsList = $menu->actionsList(Yii::$app->params['actions']);
 $categoriesListJson = Json::encode($categoriesList);
 $textsListJson = Json::encode($textsList);
 $actionsListJson = Json::encode($actionsList);

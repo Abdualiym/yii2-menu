@@ -55,7 +55,8 @@ class MenuForm extends CompositeForm
 
     public function parentMenuList()
     {
-        $menu = Menu::find()->with('translations')->orderBy('tree')->asArray()->all();
+        $menu = Menu::find()->with('translations')
+                ->orderBy('tree')->asArray()->all();
         $i = 0;
         foreach ($menu as $item) {
             foreach ($item['translations'] as $translate) {
@@ -67,11 +68,9 @@ class MenuForm extends CompositeForm
             $i++;
         }
         $makeTree = [
-            'id' => 0,
-            'title' => 'Создать меню',
-            'tree' => 0,
-            'lft' => 0,
-            'rgt' => 0,
+            'title' => '—— Создать корневое меню ——',
+            'lft' => 1,
+            'rgt' => 2,
             'depth' => 0
         ];
         $menu[] = $makeTree;

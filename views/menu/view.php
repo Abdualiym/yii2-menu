@@ -5,13 +5,19 @@ use yii\widgets\DetailView;
 use abdualiym\languageClass\Language;
 use abdualiym\menu\entities\Menu;
 use abdualiym\text\entities\CategoryTranslation;
+use abdualiym\text\helpers\TextHelper;
 
 /* @var $this yii\web\View */
 /* @var $model abdualiym\menu\entities\Menu */
+/* @var $content */
+
+Yii::$app->formatter->locale = 'ru';
 
 $this->title = 'Название: ' . $model->translations[0]->title;
 $this->params['breadcrumbs'][] = ['label' => 'Menus', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+
 ?>
 <div class="row">
     <div class="col-lg-6">
@@ -20,14 +26,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 <p>
                     <?= Html::a('Редактировать', ['update', 'id' => $model->id], ['class' => 'btn btn-flat btn-primary']) ?>
                     <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
-                        'class' => 'btn btn-flat btn-danger',
+                        'class' => 'btn btn-flat btn-danger pull-right',
                         'data' => [
                             'confirm' => 'Are you sure you want to delete this item?',
                             'method' => 'post',
                         ],
                     ]) ?>
+                    <?php if ($model->isActive()): ?>
+                        <?= Html::a(Yii::t('app', 'Draft'), ['draft', 'id' => $model->id], ['class' => 'btn btn-flat btn-default pull-right', 'data-method' => 'post']) ?>
+                    <?php else: ?>
+                        <?= Html::a(Yii::t('app', 'Activate'), ['activate', 'id' => $model->id], ['class' => 'btn btn-flat btn-success', 'data-method' => 'post']) ?>
+                    <?php endif; ?>
+
                 </p>
+                <hr>
+                <h2><?= $model->translations[0]->title ?> <small><?= Menu::getMenuTypes()[$model->type] ?></small></h2>
             </div>
+
             <div class="box-body">
                 <?= DetailView::widget([
                     'model' => $model,
@@ -35,10 +50,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         'id',
                         [
                             'attribute' => 'status',
-                            'filter' => [Menu::VISIBLE => 'Активные', Menu::HIDDEN => 'Не активные'],
-                            'value' => function ($model) {
-                                return $model->status == 1 ? 'Активный' : 'Не активный';
-                            }
+                            'label' => 'Статус',
+                            'value' => function (Menu $model) {
+                                return TextHelper::statusLabel($model->status);
+                            },
+                            'format' => 'html',
+                            'filter' => [1 => 'Активный', 0 => 'Черновик']
                         ],
                         [
                             'attribute' => 'parent',
@@ -47,14 +64,29 @@ $this->params['breadcrumbs'][] = $this->title;
                                 $parent = $model->getParent()->with('translations')->one();
 
                                 if ($parent) {
-                                    foreach ($parent->translations as $translation) {
-                                        if ($translation->lang_id == (Language::getLangByPrefix('ru'))['id']) {
+                                    foreach ($parent->translations as $translation){
+                                        if($translation->lang_id == (Language::getLangByPrefix('ru'))['id']){
                                             $translations = $translation;
                                         }
                                     }
-                                    $parent = Html::a(Html::encode($translations->title), ['view', 'id' => $parent->id]);
+                                    $parent = $parent->id !== 1
+                                        ?
+                                        Html::a(
+                                            Html::encode($translations->title),
+                                            [
+                                                'view',
+                                                'id' => $parent->id],
+                                            [
+                                                'class' => 'label label-info'
+                                            ]
+                                        )
+                                        :Html::tag('span','Верхнее меню',[
+                                            'class' => 'label label-default'
+                                        ]);
                                 } else {
-                                    $parent = 'Основное';
+                                    $parent = Html::tag('span','Основное',[
+                                        'class' => 'label label-default'
+                                    ]);
                                 }
                                 return $parent;
                             },
@@ -64,41 +96,25 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'attribute' => 'type',
                             'filter' => Menu::getMenuTypes(),
-                            'value' => function ($model) {
+                            'value' => function($model){
                                 $types = Menu::getMenuTypes();
-                                return $types[$model->type];
-                            }
-                        ],
-                        [
-                            'attribute' => 'type_helper',
-                            'label' => 'Перейти',
-                            'value' => function ($model) {
-                                switch ($model->type) {
-                                    case 'link':
-                                        return Html::a('Перейти по ссылке ', $model->type_helper);
-                                    case 'category':
-                                        $cats = CategoryTranslation::find()
-                                            ->where(['parent_id' => $model->type_helper])
-                                            ->asArray()
-                                            ->all();
-                                        foreach (Language::langList(
-                                            Yii::$app->params['languages'],
-                                            true) as $lang) {
-                                            $arr[] = Html::a($lang['title'],
-                                                Yii::$app->params['frontendHostInfo'] . '/' . $lang['prefix']
-                                                . \abdualiym\menu\components\MenuSlugHelper::getSlug(
-                                                    $cats[0]['slug'],
-                                                    $model->type, $model->type_helper, $lang),['target'=>'_blank']);
-                                        }
-
-                                        return implode('<br/>', $arr);
-                                }
+                                return Html::tag('span',$types[$model->type],[
+                                    'class' => 'label label-primary'
+                                ]);
                             },
-                            'format' => 'html'
+                            'format' => 'raw'
                         ],
                         'type_helper:html',
-                        'created_at:datetime',
-                        'updated_at:datetime',
+                        [
+                            'attribute' => 'created_at',
+                            'label' => 'Дата создание',
+                            'format' => 'datetime'
+                        ],
+                        [
+                            'attribute' => 'updated_at',
+                            'label' => 'Дата обновление',
+                            'format' => 'datetime'
+                        ],
                         [
                             'attribute' => 'created_by',
                             'label' => 'Создал',

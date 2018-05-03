@@ -2,8 +2,11 @@
 
 namespace abdualiym\menu\controllers;
 
+use abdualiym\languageClass\Language;
 use abdualiym\menu\forms\menu\MenuForm;
 use abdualiym\menu\services\MenuService;
+use abdualiym\text\entities\CategoryTranslation;
+use abdualiym\text\entities\TextTranslation;
 use Yii;
 use abdualiym\menu\entities\Menu;
 use abdualiym\menu\entities\MenuSearch;
@@ -19,16 +22,26 @@ class MenuController extends Controller
 {
     public $defaultRoute = 'menu';
     private $service;
+    private $category;
+    private $text;
+    private $language;
 
-    public function __construct($id, $module, MenuService $service, $config = [])
+    public function __construct($id, $module, MenuService $service, CategoryTranslation $category, TextTranslation $text, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+        $this->category = $category;
+        $this->text = $text;
+        $this->language = Language::getLangByPrefix(\Yii::$app->language);
     }
+
+
     public function getViewPath()
     {
         return Yii::getAlias('@vendor/abdualiym/yii2-menu/views/menu');
     }
+
+
     /**
      * @inheritdoc
      */
@@ -66,8 +79,11 @@ class MenuController extends Controller
      */
     public function actionView($id)
     {
+        $menu = $this->findModel($id);
+        $content = $this->findContent($menu);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $menu,
+            'content' => $content
         ]);
     }
 
@@ -81,7 +97,7 @@ class MenuController extends Controller
         $form = new MenuForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $menu =  $this->service->create($form);
+                $menu = $this->service->create($form);
                 return $this->redirect(['view', 'id' => $menu->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -143,7 +159,12 @@ class MenuController extends Controller
      */
     public function actionMoveUp($id)
     {
-        $this->service->moveUp($id);
+        try {
+            $this->service->moveUp($id);
+            Yii::$app->session->setFlash('success', 'Успешно перемещен вверх <i class="glyphicon glyphicon-arrow-up"></i>');
+        } catch (\LogicException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
         return $this->redirect(['index']);
     }
 
@@ -153,9 +174,37 @@ class MenuController extends Controller
      */
     public function actionMoveDown($id)
     {
-        $this->service->moveDown($id);
+        try {
+            $this->service->moveDown($id);
+            Yii::$app->session->setFlash('success', 'Успешно перемещен вниз <i class="glyphicon glyphicon-arrow-down"></i>');
+        } catch (\LogicException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
         return $this->redirect(['index']);
     }
+
+
+    public function actionActivate($id)
+    {
+        try {
+            $this->service->activate($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+
+    public function actionDraft($id)
+    {
+        try {
+            $this->service->draft($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
 
     /**
      * Finds the Menu model based on its primary key value.
@@ -167,9 +216,29 @@ class MenuController extends Controller
     protected function findModel($id)
     {
         if (($menu = Menu::find()->with('translations')->where(['id' => $id])->one()) !== null) {
+
+
             return $menu;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    protected function findContent($menu)
+    {
+
+        $result = $menu->type == 'category'
+            ?
+            $this->category::find()
+                ->with('category')
+                ->where(['parent_id' => $menu->type_helper, 'lang_id' => $this->language['id']])
+                ->one()
+            :
+            $this->text::find()
+                ->with('text')
+                ->where(['parent_id' => $menu->type_helper, 'lang_id' => $this->language['id']])
+                ->one();
+
+        return $result;
     }
 }

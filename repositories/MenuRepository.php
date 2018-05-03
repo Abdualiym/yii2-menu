@@ -9,13 +9,9 @@ use yii\web\NotFoundHttpException;
 
 class MenuRepository
 {
-    public function get($id)
+    public function get($id): Menu
     {
         if (!$menu = Menu::find()->where(['id' => $id])->with('translations')->one()) {
-
-            if (!$roots = Menu::find()->roots()->all()) {
-                return $roots;
-            }
             throw new NotFoundHttpException('Menu is not found.');
         }
         return $menu;

@@ -9,6 +9,11 @@ use abdualiym\menu\forms\menu\MenuForm;
 use abdualiym\menu\repositories\MenuRepository;
 use yii\helpers\VarDumper;
 
+/**
+ * Class MenuService
+ * @package abdualiym\menu\services
+ */
+
 class MenuService
 {
     private $repository;
@@ -56,12 +61,12 @@ class MenuService
 
         if (empty($form->parentId)) {
             $menu->makeRoot();
-        } else {
-            if (((!empty($menu->parent->id)) !== $form->parentId)) {
-                if (($parent = $this->repository->get($form->parentId)) && $parent->id !== $id) {
-                    $menu->appendTo($parent);
-                }
-            }
+        }
+
+        $parent = $menu->parent;
+        if(!$parent){
+            $parent = $this->repository->get($form->parentId);
+            $menu->appendTo($parent);
         }
         $this->repository->save($menu);
 
@@ -79,6 +84,7 @@ class MenuService
         $menu = $this->repository->get($id);
         $this->checkIsRoot($menu);
         if ($prev = $menu->prev) {
+            $menu->updated_at = time();
             $menu->insertBefore($prev);
         }
         $this->repository->save($menu);
@@ -89,14 +95,32 @@ class MenuService
         $menu = $this->repository->get($id);
         $this->checkIsRoot($menu);
         if ($next = $menu->next) {
+            $menu->updated_at = time();
             $menu->insertAfter($next);
         }
+
+        $this->repository->save($menu);
+    }
+
+    ##########     Status     ##########
+
+    public function activate($id)
+    {
+        $menu = $this->repository->get($id);
+        $menu->activate();
+        $this->repository->save($menu);
+    }
+
+    public function draft($id)
+    {
+        $menu = $this->repository->get($id);
+        $menu->draft();
         $this->repository->save($menu);
     }
 
     private function checkIsRoot(Menu $menu){
         if($menu->isRoot()){
-            \Yii::$app->session->setFlash('error', 'Это корень меню!');
+            throw new \LogicException('Изменить корень меню, нельзя!');
         }
     }
 

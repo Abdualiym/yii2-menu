@@ -41,7 +41,10 @@ class MenuSearch extends Menu
      */
     public function search($params)
     {
-        $query = Menu::find()->with('translations')->orderBy(['tree' => SORT_ASC, 'lft' => SORT_ASC, 'rgt' =>SORT_DESC]);
+        $query = Menu::find()
+            ->with('translations')
+            ->where('id != 1')
+            ->orderBy(['lft' => SORT_ASC, 'rgt' =>SORT_DESC]);
 
         // add conditions that should always apply here
 

@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use abdualiym\menu\entities\Menu;
 use abdualiym\languageClass\Language;
+use abdualiym\text\helpers\TextHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel abdualiym\menu\entities\MenuSearch */
@@ -13,9 +14,8 @@ $this->title = 'Список меню';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="menu-index">
-    <p>
-        <?= Html::a('Создать меню', ['create'], ['class' => 'btn btn-flat btn-success']) ?>
-    </p>
+
+        <?= Html::a(Html::tag('i','',['class'=>'fa fa-plus']).' Создать меню', ['create'], ['class' => 'btn btn-primary btn-flat']) ?>
     <div class="box box-default">
         <div class="box-header with-border">Заголовки по всем языкам</div>
         <div class="box-body">
@@ -62,9 +62,24 @@ $this->params['breadcrumbs'][] = $this->title;
                                         $translations = $translation;
                                     }
                                 }
-                                $parent = Html::a(Html::encode($translations->title), ['view', 'id' => $parent->id]);
+                                $parent = $parent->id !== 1
+                                    ?
+                                    Html::a(
+                                            Html::encode($translations->title),
+                                            [
+                                                    'view',
+                                                'id' => $parent->id],
+                                            [
+                                                    'class' => 'label label-info'
+                                            ]
+                                    )
+                                    :Html::tag('span','Верхнее меню',[
+                                        'class' => 'label label-default'
+                                    ]);
                             } else {
-                                $parent = 'Основное';
+                                $parent = Html::tag('span','Основное',[
+                                    'class' => 'label label-default'
+                                ]);
                             }
                             return $parent;
                         },
@@ -73,21 +88,24 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'status',
-                        'filter' => [Menu::VISIBLE => 'Активные', Menu::HIDDEN => 'Не активные'],
-                        'value' => function ($model) {
-                            return $model->status == 1 ? 'Активный' : 'Не активный';
-                        }
+                        'label' => Yii::t('text', 'Status'),
+                        'value' => function (Menu $model) {
+                            return TextHelper::statusLabel($model->status);
+                        },
+                        'format' => 'html',
+                        'filter' => [1 => 'Активный', 0 => 'Черновик']
                     ],
                     [
                         'attribute' => 'type',
                         'filter' => Menu::getMenuTypes(),
                         'value' => function($model){
                                 $types = Menu::getMenuTypes();
-                                return $types[$model->type];
-                        }
+                                return Html::tag('span',$types[$model->type],[
+                                    'class' => 'label label-primary'
+                                ]);
+                        },
+                        'format' => 'raw'
                     ],
-
-                    ['class' => 'yii\grid\ActionColumn'],
                 ],
             ]); ?>
         </div>
