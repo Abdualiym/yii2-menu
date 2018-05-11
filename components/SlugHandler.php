@@ -20,7 +20,7 @@ class SlugHandler
     private $language;
     private $actions;
 
-    public function __construct(TextTranslation $text, CategoryTranslation $category, Menu $menu, array $language,array $actions)
+    public function __construct(TextTranslation $text, CategoryTranslation $category, Menu $menu, $language, $actions)
     {
         $this->text = $text;
         $this->category = $category;
