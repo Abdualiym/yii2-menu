@@ -13,8 +13,8 @@ use abdualiym\text\helpers\TextHelper;
 
 Yii::$app->formatter->locale = 'ru';
 
-$this->title = 'Название: ' . $model->translations[0]->title;
-$this->params['breadcrumbs'][] = ['label' => 'Menus', 'url' => ['index']];
+$this->title = $model->translations[0]->title;
+$this->params['breadcrumbs'][] = ['label' => ' Меню', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 
@@ -24,23 +24,39 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="box">
             <div class="box-header">
                 <p>
-                    <?= Html::a('Редактировать', ['update', 'id' => $model->id], ['class' => 'btn btn-flat btn-primary']) ?>
-                    <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
-                        'class' => 'btn btn-flat btn-danger pull-right',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to delete this item?',
-                            'method' => 'post',
-                        ],
-                    ]) ?>
+
+                    <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-pencil']) . ' Редактировать',
+                        ['update', 'id' => $model->id],
+                        ['class' => 'btn btn-flat btn-primary']) ?>
+
+                    <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-trash']) . ' Удалить',
+                        ['delete', 'id' => $model->id],
+                        [
+                            'class' => 'btn btn-flat btn-danger pull-right',
+                            'data' => [
+                                'confirm' => 'Are you sure you want to delete this item?',
+                                'method' => 'post',
+                            ],
+                        ]) ?>
                     <?php if ($model->isActive()): ?>
-                        <?= Html::a(Yii::t('app', 'Draft'), ['draft', 'id' => $model->id], ['class' => 'btn btn-flat btn-default pull-right', 'data-method' => 'post']) ?>
+
+                        <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-eye-slash']) .' '. Yii::t('app', 'Draft'),
+                            ['draft', 'id' => $model->id],
+                            ['class' => 'btn btn-flat btn-default pull-right', 'data-method' => 'post']) ?>
+
                     <?php else: ?>
-                        <?= Html::a(Yii::t('app', 'Activate'), ['activate', 'id' => $model->id], ['class' => 'btn btn-flat btn-success', 'data-method' => 'post']) ?>
+
+                        <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-eye']) .' '. Yii::t('app', 'Activate'),
+                            ['activate', 'id' => $model->id],
+                            ['class' => 'btn btn-flat btn-success', 'data-method' => 'post']) ?>
+
                     <?php endif; ?>
 
                 </p>
                 <hr>
-                <h2><?= $model->translations[0]->title ?> <small><?= Menu::getMenuTypes()[$model->type] ?></small></h2>
+                <h2><?= $model->translations[0]->title ?>
+                    <small><?= Menu::getMenuTypes()[$model->type] ?></small>
+                </h2>
             </div>
 
             <div class="box-body">
@@ -64,8 +80,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 $parent = $model->getParent()->with('translations')->one();
 
                                 if ($parent) {
-                                    foreach ($parent->translations as $translation){
-                                        if($translation->lang_id == (Language::getLangByPrefix('ru'))['id']){
+                                    foreach ($parent->translations as $translation) {
+                                        if ($translation->lang_id == (Language::getLangByPrefix('ru'))['id']) {
                                             $translations = $translation;
                                         }
                                     }
@@ -80,11 +96,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 'class' => 'label label-info'
                                             ]
                                         )
-                                        :Html::tag('span','Верхнее меню',[
+                                        : Html::tag('span', 'Верхнее меню', [
                                             'class' => 'label label-default'
                                         ]);
                                 } else {
-                                    $parent = Html::tag('span','Основное',[
+                                    $parent = Html::tag('span', 'Основное', [
                                         'class' => 'label label-default'
                                     ]);
                                 }
@@ -96,15 +112,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'attribute' => 'type',
                             'filter' => Menu::getMenuTypes(),
-                            'value' => function($model){
+                            'value' => function ($model) {
                                 $types = Menu::getMenuTypes();
-                                return Html::tag('span',$types[$model->type],[
+                                return Html::tag('span', $types[$model->type], [
                                     'class' => 'label label-primary'
                                 ]);
                             },
                             'format' => 'raw'
                         ],
-                        'type_helper:html',
                         [
                             'attribute' => 'created_at',
                             'label' => 'Дата создание',

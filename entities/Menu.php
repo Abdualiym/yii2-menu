@@ -160,16 +160,18 @@ class Menu extends ActiveRecord
     {
         $params = [
             'en' => [
-                'link' => 'link',
                 'category' => 'category',
-                'content' => 'content',
-                'action' => 'module'
+                'content' => 'pages',
+                'articles' => 'articles',
+                'action' => 'module',
+                'link' => 'link',
             ],
             'ru' => [
-                'link' => 'Ссылка',
                 'category' => 'Категория',
-                'content' => 'Контент',
-                'action' => 'Модуль'
+                'articles' => 'Статья',
+                'content' => 'Страница',
+                'action' => 'Модуль',
+                'link' => 'Произвольная ссылка',
             ],
         ];
         if ($lang) {
@@ -177,6 +179,75 @@ class Menu extends ActiveRecord
         }
 
         return $params['ru'];
+    }
+
+    public function pagesList(Text $text)
+    {
+        $texts = $text->find()
+            ->with('translations')
+            ->where(['status' => $text::STATUS_ACTIVE, 'is_article' => 0])
+            ->orderBy('created_at DESC')
+            ->all();
+        $arr = ArrayHelper::getColumn($texts, function ($text) {
+            return [
+                'id' => $text->id,
+                'date' => $text->created_at,
+                'title' => ArrayHelper::map($text->translations, 'lang_id', 'title'),
+            ];
+        });
+        return $arr;
+    }
+
+    public function articlesList(Text $text)
+    {
+        $texts = $text->find()
+            ->with('translations')
+            ->where(['status' => $text::STATUS_ACTIVE, 'is_article' => 1])
+            ->orderBy('date DESC')
+            ->all();
+        $arr = ArrayHelper::getColumn($texts, function ($text) {
+            return [
+                'id' => $text->id,
+                'date' => $text->date,
+                'title' => ArrayHelper::map($text->translations, 'lang_id', 'title'),
+            ];
+        });
+        return $arr;
+    }
+
+    public function categoriesList(Category $category)
+    {
+        $categories = $category->find()
+            ->with('translations')
+            ->where(['status' => $category::STATUS_ACTIVE])
+            ->orderBy('created_at DESC')
+            ->all();
+        $arr = ArrayHelper::getColumn($categories, function ($text) {
+            return [
+                'id' => $text->id,
+                'date' => $text->created_at,
+                'title' => ArrayHelper::map($text->translations, 'lang_id', 'name'),
+            ];
+        });
+        return $arr;
+    }
+
+    public function countByType($type, $articlesList = null, $pagesList = null, $categoriesList = null,$actions = null)
+    {
+        switch ($type) {
+            case 'link':
+                return null;
+            case 'content':
+                return $pagesList ? [count($pagesList), $pagesList] : $pagesList;
+            case 'articles':
+                return $articlesList ? [count($articlesList), $articlesList] : $articlesList;
+            case 'category':
+                return $categoriesList ? [count($categoriesList), $categoriesList]: $categoriesList;
+            case 'action':
+                return [count($actions), $actions];
+            default:
+                return false;
+        }
     }
 
 
@@ -211,7 +282,6 @@ class Menu extends ActiveRecord
     }
 
 
-
     public function transactions()
     {
         return [
@@ -221,7 +291,15 @@ class Menu extends ActiveRecord
 
     public function actionsList($params)
     {
-        return ArrayHelper::map($params, 'slug', 'name');
+        return ArrayHelper::getColumn($params, function($langTitle){
+            $arr['slug'] = $langTitle['slug'];
+            foreach ($langTitle['title'] as $prefix => $title)
+            {
+                $arr['title'][(Language::getLangByPrefix($prefix))['id']] = $title;
+
+            }
+            return $arr;
+        });
     }
 
     public static function find()

@@ -6,10 +6,10 @@ use yii\helpers\Html;
 /* @var $model abdualiym\menu\entities\Menu */
 /* @var $menu abdualiym\menu\entities\Menu */
 
-$this->title = 'Update Menu: ' . $menu->translations[0]['title'];
-$this->params['breadcrumbs'][] = ['label' => 'Menus', 'url' => ['index']];
+$this->title = $menu->translations[0]['title'];
+$this->params['breadcrumbs'][] = ['label' => 'Меню', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $menu->translations[0]['title'], 'url' => ['view', 'id' => $menu->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Редактирование';
 ?>
 <div class="menu-update">
 
