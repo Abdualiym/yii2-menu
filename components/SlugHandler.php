@@ -13,7 +13,7 @@ use yii\helpers\VarDumper;
 class SlugHandler
 {
     private $single;
-    private $type;
+    public $type;
     private $menu;
     private $text;
     private $category;
@@ -72,6 +72,8 @@ class SlugHandler
 
         return $result;
     }
+
+
 
     private function verificationSlug(string $slug){
 
@@ -224,7 +226,7 @@ class SlugHandler
         return $menu;
     }
 
-    private function getRealSlug($translation)
+    public function getRealSlug($translation)
     {
         if (!$translation) {
             throw new \LogicException('Вы вошли без объекта');

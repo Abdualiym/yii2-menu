@@ -2,6 +2,7 @@
 
 namespace abdualiym\menu\entities;
 
+use abdualiym\menu\components\SlugHandler;
 use abdualiym\menu\components\SlugRender;
 use abdualiym\menu\entities\queries\MenuQuery;
 use abdualiym\menu\entities\MenuTranslation;
@@ -64,6 +65,20 @@ class Menu extends ActiveRecord
         $this->status = $status;
         $this->type = $type;
         $this->type_helper = $type_helper;
+    }
+
+
+    public static function getSlugItem($translation,$type,$lang){
+        $helper = new SlugHandler(
+            new TextTranslation(),
+            new CategoryTranslation(),
+            new self(),
+            $lang,
+            Yii::$app->params['actions']
+        );
+        $helper->type = $type;
+
+        return $helper->getRealSlug($translation);
     }
 
     // Status
