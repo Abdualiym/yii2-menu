@@ -35,8 +35,15 @@ class SlugHandler
 
         $explodeSlug = $this->verificationSlug($slug);
 
-        $date = $this->isDateFilter($explodeSlug) ? array_pop($explodeSlug) : null;
-
+        if($date = $this->isDateFilter($explodeSlug)){
+            if(is_array($date)){
+                $explodeSlug = array_values(array_diff($explodeSlug,$date));
+                $slug = implode('/',$explodeSlug);
+                $date = null;
+            }elseif(is_string($date)){
+                array_pop($explodeSlug);
+            }
+        }
         $this->single = $this->isSingle($explodeSlug);
 
         $currentSlug = $this->pullOutSlug($explodeSlug);
@@ -50,12 +57,12 @@ class SlugHandler
 
 
             $result['data'] = [
-                'listing' => $this->findListing($data['data'], $slug,$date),
+                'listing' => $this->findListing($data['data'], $slug, $date),
                 'view' => $category_view_template_names[$data['data']->category->feed_with_image],
                 'currentCat' => $data['data']
             ];
 
-            if(!$this->single) $result['data']['breadcrumbs'] = $this->getBreadcrumbs($explodeSlug, $this->language);
+            if (!$this->single) $result['data']['breadcrumbs'] = $this->getBreadcrumbs($explodeSlug, $this->language);
         }
 
 
@@ -63,9 +70,8 @@ class SlugHandler
 
             $result['data'] = ['content' => $data['data']];
 
-            if(!$this->single) $result['data']['breadcrumbs'] = $this->getBreadcrumbs($explodeSlug, $this->language);
+            if (!$this->single) $result['data']['breadcrumbs'] = $this->getBreadcrumbs($explodeSlug, $this->language);
         }
-
 
 
         $result['template'] = $this->type == 'article' ? 'page' : $this->type;
@@ -74,10 +80,10 @@ class SlugHandler
     }
 
 
+    private function verificationSlug(string $slug)
+    {
 
-    private function verificationSlug(string $slug){
-
-        $slug = trim($slug,'/');
+        $slug = trim($slug, '/');
         $explodeSlug = explode('/', $slug);
         return $explodeSlug;
     }
@@ -85,6 +91,7 @@ class SlugHandler
 
     private function pullOutSlug(array $slug)
     {
+
         return $this->single ? $slug[0] : $slug[count($slug) - 1];
     }
 
@@ -379,10 +386,10 @@ class SlugHandler
 
     public function isAction($slug)
     {
-        $explode = explode('/',$slug);
+        $explode = explode('/', $slug);
         if (count($explode) > 1) {
 
-           foreach ($this->actions as $action) {
+            foreach ($this->actions as $action) {
                 if ($action['slug'] == $slug) {
                     http_redirect($slug);
                 }
@@ -431,6 +438,7 @@ class SlugHandler
     {
         $start = strtotime($date);
         $end = strtotime($date . '+1 month');
+        $end = $end > time() ? time() : $end;
 
         if ($date) {
             $result = [
@@ -451,7 +459,13 @@ class SlugHandler
     {
         $date = count($explodeSlug) == 1 ? 0 : $explodeSlug[count($explodeSlug) - 1];
         $match = preg_match('/(19|20)\d\d[-](0[1-9]|1[012])/', $date);
-        return $match ?? $date;
+        if ($match) {
+            $match = $date;
+        }else{
+            $match = preg_grep('/(19|20)\d\d[-](0[1-9]|1[012])/', $explodeSlug);
+        }
+
+        return !empty($match) ? $match : false;
     }
 
 
